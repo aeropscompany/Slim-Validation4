@@ -91,12 +91,16 @@ class Validation
     $this->options = array_merge($this->options, $options);
   }
 
+  /**
+   * Setting Translator Factory
+   *
+   * @return void
+   */
   private function setTranslatorFactory(): void {
-    if (is_null($this->translator)) {
-      return;
-    }
+    $factoryInstance = (is_null($this->translator)) ?
+      new Factory() : (new Factory())->withTranslator($this->translator);
     Factory::setDefaultInstance(
-      (new Factory())->withTranslator($this->translator)
+      $factoryInstance
     );
   }
 
@@ -127,8 +131,10 @@ class Validation
    * @param array $params The array of parameters.
    * @param array $validators The array of validators.
    * @param array $actualKeys An array that will save all the keys of the tree to retrieve the correct value.
+   *
+   * @return void
    */
-  private function validate(array $params = [], array $validators = [], array $actualKeys = []) {
+  private function validate(array $params = [], array $validators = [], array $actualKeys = []): void {
     //Validate every parameter in the validators array
     foreach ($validators as $key => $validator) {
       $actualKeys[] = $key;
@@ -161,6 +167,7 @@ class Validation
     }
     $firstKey = array_shift($keys);
     if ($this->isArrayLike($params) && array_key_exists($firstKey, $params)) {
+      $params = (array) $params;
       $paramValue = $params[$firstKey];
       return $this->getNestedParam($paramValue, $keys);
     }
@@ -233,22 +240,43 @@ class Validation
     $this->setTranslatorFactory();
   }
 
+  /**
+   * Merge Slim Params.
+   *
+   * @param ServerRequestInterface $request
+   *
+   * @return array Merged requested params
+   */
   private function retrieveParams(ServerRequestInterface $request): array {
     return array_merge(
-      $this->retrieveRouteParams($request),
+      $request->getQueryParams(),
       $this->retrieveBodyParams($request),
-      $request->getQueryParams()
+      $this->retrieveRouteParams($request)
     );
   }
 
+  /**
+   * Retrieve Route Params.
+   *
+   * @param ServerRequestInterface $request
+   *
+   * @return array Route params
+   */
   private function retrieveRouteParams(ServerRequestInterface $request): array {
     $routeContext = RouteContext::fromRequest($request);
     $route = $routeContext->getRoute();
     return $route->getArguments();
   }
 
+  /**
+   * Retrieve Body Params (XML, JSON)
+   *
+   * @param ServerRequestInterface $request
+   *
+   * @return array Body params
+   */
   private function retrieveBodyParams(ServerRequestInterface $request): array {
     $params = $request->getParsedBody();
-    return is_array($params) ? $params : [];
+    return (array) $params;
   }
 }

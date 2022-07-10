@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2849a12373a80060b26878443ac3251",
+    "content-hash": "0ce669157aed313db86902efa04ddb24",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -865,45 +865,6 @@
                 }
             ],
             "time": "2022-05-10T07:21:04+00:00"
-        },
-        {
-            "name": "ultra-lite/container",
-            "version": "6.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ultra-lite/container.git",
-                "reference": "448ecffdd3e751969e6c240541ff82aca7ee3112"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ultra-lite/container/zipball/448ecffdd3e751969e6c240541ff82aca7ee3112",
-                "reference": "448ecffdd3e751969e6c240541ff82aca7ee3112",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.0",
-                "psr/container": "^1.0"
-            },
-            "require-dev": {
-                "behat/behat": "^3.3",
-                "phpspec/phpspec": "^3.2",
-                "phpunit/phpunit": "^6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "UltraLite\\Container\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "support": {
-                "issues": "https://github.com/ultra-lite/container/issues",
-                "source": "https://github.com/ultra-lite/container/tree/master"
-            },
-            "time": "2018-01-02T16:27:56+00:00"
         }
     ],
     "packages-dev": [
@@ -4882,5 +4843,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "1.1.0"
 }
