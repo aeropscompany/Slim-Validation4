@@ -1,240 +1,254 @@
 <?php
 
-namespace DavidePastore\Slim\Validation;
+namespace Inok\Slim\Validation;
 
+use ArrayAccess;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Respect\Validation\Exceptions\NestedValidationException;
+use Respect\Validation\Factory;
+use SimpleXMLElement;
+use Slim\Routing\RouteContext;
 
 /**
  * Validation for Slim.
  */
 class Validation
 {
-    /**
-     * Validators.
-     *
-     * @var array
-     */
-    protected $validators = [];
+  /**
+   * Validators.
+   *
+   * @var array
+   */
+  protected array $validators = [];
 
-    /**
-     * Options.
-     *
-     * @var array
-     */
-    protected $options = [
-    ];
+  /**
+   * Options.
+   *
+   * @var array
+   */
+  protected array $options = [];
 
-    /**
-     * The translator to use for the exception message.
-     *
-     * @var callable
-     */
-    protected $translator = null;
+  /**
+   * The translator to use for the exception message.
+   *
+   * @var callable
+   */
+  protected $translator = null;
 
-    /**
-     * Errors from the validation.
-     *
-     * @var array
-     */
-    protected $errors = [];
+  /**
+   * Errors from the validation.
+   *
+   * @var array
+   */
+  protected array $errors = [];
 
-    /**
-     * The 'errors' attribute name.
-     *
-     * @var string
-     */
-    protected $errors_name = 'errors';
+  /**
+   * The 'errors' attribute name.
+   *
+   * @var string
+   */
+  protected string $errors_name = 'errors';
 
-    /**
-     * The 'has_error' attribute name.
-     *
-     * @var string
-     */
-    protected $has_errors_name = 'has_errors';
+  /**
+   * The 'has_error' attribute name.
+   *
+   * @var string
+   */
+  protected string $has_errors_name = 'has_errors';
 
-    /**
-     * The 'validators' attribute name.
-     *
-     * @var string
-     */
-    protected $validators_name = 'validators';
+  /**
+   * The 'validators' attribute name.
+   *
+   * @var string
+   */
+  protected string $validators_name = 'validators';
 
-    /**
-     * The 'translator' attribute name.
-     *
-     * @var string
-     */
-    protected $translator_name = 'translator';
+  /**
+   * The 'translator' attribute name.
+   *
+   * @var string
+   */
+  protected string $translator_name = 'translator';
 
-    /**
-     * Create new Validator service provider.
-     *
-     * @param null|array|ArrayAccess $validators
-     * @param null|callable          $translator
-     * @param []|array               $options
-     */
-    public function __construct($validators = null, $translator = null, $options = [])
-    {
-        // Set the validators
-        if (is_array($validators) || $validators instanceof \ArrayAccess) {
-            $this->validators = $validators;
-        } elseif (is_null($validators)) {
-            $this->validators = [];
+  /**
+   * Create new Validator service provider.
+   *
+   * @param null|array|ArrayAccess $validators
+   * @param callable|null $translator
+   * @param array $options
+   */
+  public function __construct($validators = null, callable $translator = null, array $options = []) {
+    // Set the validators
+    if (is_array($validators) || $validators instanceof ArrayAccess) {
+      $this->validators = $validators;
+    } elseif (is_null($validators)) {
+      $this->validators = [];
+    }
+    $this->translator = $translator;
+    $this->setTranslatorFactory();
+    $this->options = array_merge($this->options, $options);
+  }
+
+  private function setTranslatorFactory(): void {
+    if (is_null($this->translator)) {
+      return;
+    }
+    Factory::setDefaultInstance(
+      (new Factory())->withTranslator($this->translator)
+    );
+  }
+
+  /**
+   * Validation middleware invokable class.
+   *
+   * @param ServerRequestInterface $request PSR7 request
+   * @param RequestHandlerInterface $handler PSR7 response
+   *
+   * @return ResponseInterface
+   */
+  public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+    $this->errors = [];
+    $this->validate($this->retrieveParams($request), $this->validators);
+
+    $request = $request->withAttribute($this->errors_name, $this->getErrors());
+    $request = $request->withAttribute($this->has_errors_name, $this->hasErrors());
+    $request = $request->withAttribute($this->validators_name, $this->getValidators());
+    $request = $request->withAttribute($this->translator_name, $this->getTranslator());
+
+    return $handler->handle($request);
+  }
+
+  /**
+   * Validate the parameters by the given params, validators and actual keys.
+   * This method populates the $errors attribute.
+   *
+   * @param array $params The array of parameters.
+   * @param array $validators The array of validators.
+   * @param array $actualKeys An array that will save all the keys of the tree to retrieve the correct value.
+   */
+  private function validate(array $params = [], array $validators = [], array $actualKeys = []) {
+    //Validate every parameter in the validators array
+    foreach ($validators as $key => $validator) {
+      $actualKeys[] = $key;
+      $param = $this->getNestedParam($params, $actualKeys);
+      if (is_array($validator)) {
+        $this->validate($params, $validator, $actualKeys);
+      } else {
+        try {
+          $validator->assert($param);
+        } catch (NestedValidationException $exception) {
+          $this->errors[implode('.', $actualKeys)] = $exception->getMessages();
         }
-        $this->translator = $translator;
-        $this->options = array_merge($this->options, $options);
+      }
+      //Remove the key added in this foreach
+      array_pop($actualKeys);
     }
+  }
 
-    /**
-     * Validation middleware invokable class.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
-     * @param \Psr\Http\Message\ResponseInterface      $response PSR7 response
-     * @param callable                                 $next     Next middleware
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function __invoke($request, $response, $next)
-    {
-        $this->errors = [];
-        $params = $request->getParams();
-        $params = array_merge((array) $request->getAttribute('routeInfo')[2], $params);
-        $this->validate($params, $this->validators);
-
-        $request = $request->withAttribute($this->errors_name, $this->getErrors());
-        $request = $request->withAttribute($this->has_errors_name, $this->hasErrors());
-        $request = $request->withAttribute($this->validators_name, $this->getValidators());
-        $request = $request->withAttribute($this->translator_name, $this->getTranslator());
-
-        return $next($request, $response);
+  /**
+   * Get the nested parameter value.
+   *
+   * @param array|mixed $params An array that represents the values of the parameters.
+   * @param array|mixed $keys An array that represents the tree of keys to use.
+   *
+   * @return array|void The nested parameter value by the given params and tree of keys.
+   */
+  private function getNestedParam($params = [], $keys = []) {
+    if (empty($keys)) {
+      return $params;
     }
-
-    /**
-     * Validate the parameters by the given params, validators and actual keys.
-     * This method populates the $errors attribute.
-     *
-     * @param array $params     The array of parameters.
-     * @param array $validators The array of validators.
-     * @param array $actualKeys An array that will save all the keys of the tree to retrieve the correct value.
-     */
-    private function validate($params = [], $validators = [], $actualKeys = [])
-    {
-        //Validate every parameters in the validators array
-        foreach ($validators as $key => $validator) {
-            $actualKeys[] = $key;
-            $param = $this->getNestedParam($params, $actualKeys);
-            if (is_array($validator)) {
-                $this->validate($params, $validator, $actualKeys);
-            } else {
-                try {
-                    $validator->assert($param);
-                } catch (NestedValidationException $exception) {
-                    if ($this->translator) {
-                        $exception->setParam('translator', $this->translator);
-                    }
-                    $this->errors[implode('.', $actualKeys)] = $exception->getMessages();
-                }
-            }
-
-            //Remove the key added in this foreach
-            array_pop($actualKeys);
-        }
+    $firstKey = array_shift($keys);
+    if ($this->isArrayLike($params) && array_key_exists($firstKey, $params)) {
+      $paramValue = $params[$firstKey];
+      return $this->getNestedParam($paramValue, $keys);
     }
+    return;
+  }
 
-    /**
-     * Get the nested parameter value.
-     *
-     * @param array $params An array that represents the values of the parameters.
-     * @param array $keys   An array that represents the tree of keys to use.
-     *
-     * @return mixed The nested parameter value by the given params and tree of keys.
-     */
-    private function getNestedParam($params = [], $keys = [])
-    {
-        if (empty($keys)) {
-            return $params;
-        } else {
-            $firstKey = array_shift($keys);
-            if ($this->isArrayLike($params) && array_key_exists($firstKey, $params)) {
-                $params = (array) $params;
-                $paramValue = $params[$firstKey];
+  /**
+   * Check if the given $params is an array like variable.
+   *
+   * @param $params array|SimpleXMLElement The variable to check.
+   *
+   * @return bool Returns true if the given $params parameter is array like.
+   */
+  private function isArrayLike($params): bool {
+    return is_array($params) || $params instanceof SimpleXMLElement;
+  }
 
-                return $this->getNestedParam($paramValue, $keys);
-            } else {
-                return;
-            }
-        }
-    }
+  /**
+   * Check if there are any errors.
+   *
+   * @return bool
+   */
+  public function hasErrors(): bool {
+    return !empty($this->errors);
+  }
 
-    /**
-     * Check if the given $params is an array like variable.
-     *
-     * @param array $params The variable to check.
-     *
-     * @return boolean Returns true if the given $params parameter is array like.
-     */
-    private function isArrayLike($params)
-    {
-        return is_array($params) || $params instanceof \SimpleXMLElement;
-    }
+  /**
+   * Get errors.
+   *
+   * @return array The errors array.
+   */
+  public function getErrors(): array {
+    return $this->errors;
+  }
 
-    /**
-     * Check if there are any errors.
-     *
-     * @return bool
-     */
-    public function hasErrors()
-    {
-        return !empty($this->errors);
-    }
+  /**
+   * Get validators.
+   *
+   * @return array The validators array.
+   */
+  public function getValidators(): array {
+    return $this->validators;
+  }
 
-    /**
-     * Get errors.
-     *
-     * @return array The errors array.
-     */
-    public function getErrors()
-    {
-        return $this->errors;
-    }
+  /**
+   * Set validators.
+   *
+   * @param array $validators The validators array.
+   */
+  public function setValidators(array $validators): void {
+    $this->validators = $validators;
+  }
 
-    /**
-     * Get validators.
-     *
-     * @return array The validators array.
-     */
-    public function getValidators()
-    {
-        return $this->validators;
-    }
+  /**
+   * Get translator.
+   *
+   * @return callable The translator.
+   */
+  public function getTranslator(): ?callable {
+    return $this->translator;
+  }
 
-    /**
-     * Set validators.
-     *
-     * @param array $validators The validators array.
-     */
-    public function setValidators($validators)
-    {
-        $this->validators = $validators;
-    }
+  /**
+   * Set translator.
+   *
+   * @param callable $translator The translator.
+   */
+  public function setTranslator(callable $translator): void {
+    $this->translator = $translator;
+    $this->setTranslatorFactory();
+  }
 
-    /**
-     * Get translator.
-     *
-     * @return callable The translator.
-     */
-    public function getTranslator()
-    {
-        return $this->translator;
-    }
+  private function retrieveParams(ServerRequestInterface $request): array {
+    return array_merge(
+      $this->retrieveRouteParams($request),
+      $this->retrieveBodyParams($request),
+      $request->getQueryParams()
+    );
+  }
 
-    /**
-     * Set translator.
-     *
-     * @param callable $translator The translator.
-     */
-    public function setTranslator($translator)
-    {
-        $this->translator = $translator;
-    }
+  private function retrieveRouteParams(ServerRequestInterface $request): array {
+    $routeContext = RouteContext::fromRequest($request);
+    $route = $routeContext->getRoute();
+    return $route->getArguments();
+  }
+
+  private function retrieveBodyParams(ServerRequestInterface $request): array {
+    $params = $request->getParsedBody();
+    return is_array($params) ? $params : [];
+  }
 }

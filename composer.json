@@ -1,38 +1,50 @@
 {
-    "name": "davidepastore/slim-validation",
-    "description": "A slim middleware for validation based on Respect/Validation",
-    "keywords": ["slim","framework","middleware","validation", "validator"],
-    "type": "library",
-    "authors": [
-        {
-            "name": "Davide Pastore",
-            "email": "pasdavide@gmail.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.5.0",
-        "psr/http-message": "^1.0",
-        "respect/validation": "^1.1 >=1.1.23"
-    },
-    "require-dev": {
-        "slim/slim": "~3.0",
-        "phpunit/phpunit": "^4.0",
-        "scrutinizer/ocular": "~1.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "DavidePastore\\Slim\\Validation\\": "src"
-        }
-    },
-    "license" : "GPL-2.0+",
-    "autoload-dev": {
-        "psr-4": {
-            "DavidePastore\\Slim\\Validation\\Tests\\": "tests"
-        }
-    },
-    "config": {
-        "platform": {
-            "php": "5.5"
-        }
+  "name": "inok/slim-validation4",
+  "description": "A slim middleware for validation based on Respect/Validation",
+  "keywords": ["slim","framework","middleware","validation", "validator"],
+  "type": "library",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Davide Pastore",
+      "email": "pasdavide@gmail.com"
+    }, {
+      "name": "Nikolay Chizhov",
+      "email": "nchizhov@inok.ru",
+      "homepage": "http://blog.kgd.in",
+      "role": "System Administrator"
     }
+  ],
+  "require": {
+    "php": ">=7.4.0",
+    "ultra-lite/container": "^6.2",
+    "php-di/php-di": "^6.3",
+    "psr/http-message": "^1.0",
+    "psr/http-factory": "^1.0",
+    "slim/psr7": "^1.3",
+    "respect/validation": "^2.2.3",
+    "ext-simplexml": "*"
+  },
+  "require-dev": {
+    "slim/slim": "4.*",
+    "phpunit/phpunit": "9.5.21",
+    "scrutinizer/ocular": "1.9",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Inok\\Slim\\Validation\\": "src"
+    }
+  },
+  "license" : "GPL-2.0+",
+  "autoload-dev": {
+    "psr-4": {
+      "Inok\\Slim\\Validation\\Tests\\": "tests"
+    }
+  },
+  "config": {
+    "platform": {
+      "php": "7.4"
+    }
+  }
 }
