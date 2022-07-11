@@ -1,3 +1,4 @@
 preset: psr2
-
 risky: false
+tab-width: 2
+version: 7.4
