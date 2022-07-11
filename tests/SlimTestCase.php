@@ -92,7 +92,7 @@ class SlimTestCase extends TestCase
     return $response;
   }
 
-  protected final function setExpectedValues($expectedValidators, $expectedHasErrors, $expectedTranslator, $expectedErrors): void {
+  final protected function setExpectedValues($expectedValidators, $expectedHasErrors, $expectedTranslator, $expectedErrors): void {
     self::$expectedValidators = $expectedValidators;
     self::$expectedTranslator = $expectedTranslator;
     self::$expectedHasErrors = $expectedHasErrors;
