@@ -4,5 +4,4 @@ tab-width: 2
 version: 7.4
 disabled:
   - psr2_braces
-  - psr12_braces
 
