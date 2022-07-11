@@ -20,16 +20,18 @@ class SlimTestCase extends TestCase
   protected ?App $app;
   protected int $testIndex = 0;
 
-  static $expectedValidators, $expectedHasErrors, $expectedTranslator, $expectedErrors;
+  public static $expectedValidators;
+  public static $expectedHasErrors;
+  public static $expectedTranslator;
+  public static $expectedErrors;
 
-
-  protected final function setUp(): void {
+  final protected function setUp(): void {
     parent::setUp();
     $this->setExpectedValues(null, null, null, null);
     $this->app = $this->getAppInstance();
   }
 
-  protected final function tearDown(): void {
+  final protected function tearDown(): void {
     parent::tearDown();
     $this->app = null;
     $this->testIndex++;
@@ -40,7 +42,7 @@ class SlimTestCase extends TestCase
    *
    * @return App
    */
-  private final function getAppInstance(): App {
+  final private function getAppInstance(): App {
     $containerBuilder = new ContainerBuilder();
     $container = $containerBuilder->build();
 
@@ -50,15 +52,15 @@ class SlimTestCase extends TestCase
     return $app;
   }
 
-  protected final function createRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface {
+  final protected function createRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface {
     return (new ServerRequestFactory())->createServerRequest($method, $uri, $serverParams);
   }
 
-  protected final function createEmptyRequest(string $method, $uri, array $data = null): ServerRequestInterface {
+  final protected function createEmptyRequest(string $method, $uri, array $data = null): ServerRequestInterface {
     return $this->createRequest($method, $uri);
   }
 
-  protected final function createJsonRequest(string $method, $uri, array $data = null): ServerRequestInterface {
+  final protected function createJsonRequest(string $method, $uri, array $data = null): ServerRequestInterface {
     $request = $this->createRequest($method, $uri);
     if ($data !== null) {
       $request = $request->withParsedBody($data);
@@ -66,7 +68,7 @@ class SlimTestCase extends TestCase
     return $request->withHeader('Content-Type', 'application/json;charset=utf8');
   }
 
-  protected final function createXMLRequest(string $method, $uri, string $data = null): ServerRequestInterface {
+  final protected function createXMLRequest(string $method, $uri, string $data = null): ServerRequestInterface {
     $request = $this->createRequest($method, $uri);
     if ($data !== null) {
       $request = $request->withParsedBody(simplexml_load_string($data));

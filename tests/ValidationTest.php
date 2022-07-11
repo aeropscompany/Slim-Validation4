@@ -12,8 +12,15 @@ class ValidationTest extends SlimTestCase
    *
    * @dataProvider validationProvider
    */
-  public function testValidation($expectedValidators, $expectedTranslator, $expectedHasErrors,
-                                 $expectedErrors, string $requestType = 'GET', $body = null, array $options = []): void {
+  public function testValidation(
+    $expectedValidators,
+    $expectedTranslator,
+    $expectedHasErrors,
+    $expectedErrors,
+    string $requestType = 'GET',
+    $body = null,
+    array $options = []
+  ): void {
     $this->setExpectedValues($expectedValidators, $expectedHasErrors, $expectedTranslator, $expectedErrors);
 
     $url = '/'.$this->testIndex;
