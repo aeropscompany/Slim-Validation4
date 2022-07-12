@@ -1,7 +1,7 @@
 # Slim Framework Validation
 
 [![Latest version][ico-version]][link-packagist]
-[![Build Status][ico-travis]][link-travis]
+[![Build Status][ico-codecov]][link-codecov]
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
@@ -341,15 +341,15 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 [respect-validation]: https://github.com/Respect/Validation
 [custom-messages]: https://respect-validation.readthedocs.io/en/2.1/feature-guide/#custom-messages
 [ico-version]: https://img.shields.io/packagist/v/Inok/Slim-Validation4.svg?style=flat-square
-[ico-travis]: https://travis-ci.org/DavidePastore/Slim-Validation.svg?branch=master
 [ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/DavidePastore/Slim-Validation.svg?style=flat-square
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/davidepastore/Slim-Validation.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/inok/slim-validation4.svg?style=flat-square
 [ico-styleci]: https://styleci.io/repos/510467512/shield
+[ico-codecov]: https://codecov.io/gh/nchizhov/Slim-Validation4/branch/master/graph/badge.svg?token=RVQEA5IMUX
 
 [link-packagist]: https://packagist.org/packages/inok/slim-validation4
-[link-travis]: https://travis-ci.org/DavidePastore/Slim-Validation
 [link-scrutinizer]: https://scrutinizer-ci.com/g/DavidePastore/Slim-Validation/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/DavidePastore/Slim-Validation
 [link-downloads]: https://packagist.org/packages/inok/slim-validation4
 [link-styleci]: https://styleci.io/repos/510467512/
+[link-codecov]: https://codecov.io/gh/nchizhov/Slim-Validation4
