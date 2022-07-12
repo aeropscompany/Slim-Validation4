@@ -166,12 +166,15 @@ class Validation
       return $params;
     }
     $firstKey = array_shift($keys);
-    if ($this->isArrayLike($params) && array_key_exists($firstKey, $params)) {
-      $params = (array) $params;
-      $paramValue = $params[$firstKey];
-      return $this->getNestedParam($paramValue, $keys);
+    if (!$this->isArrayLike($params)) {
+      return;
     }
-    return;
+    $params = (array)$params;
+    if (!array_key_exists($firstKey, $params)) {
+      return;
+    }
+    $paramValue = $params[$firstKey];
+    return $this->getNestedParam($paramValue, $keys);
   }
 
   /**
