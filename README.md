@@ -1,10 +1,9 @@
 # Slim Framework Validation
 
+![ico-license]
 [![Latest version][ico-version]][link-packagist]
-[![Build Status][ico-codecov]][link-codecov]
-[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
-[![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
+[![Build Status][ico-codecov]][link-codecov]
 [![PSR2 Conformance][ico-styleci]][link-styleci]
 
 A validation library for the Slim Framework. It internally uses [Respect/Validation][respect-validation].
@@ -340,16 +339,13 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 [respect-validation]: https://github.com/Respect/Validation
 [custom-messages]: https://respect-validation.readthedocs.io/en/2.1/feature-guide/#custom-messages
-[ico-version]: https://img.shields.io/packagist/v/Inok/Slim-Validation4.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/DavidePastore/Slim-Validation.svg?style=flat-square
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/davidepastore/Slim-Validation.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/inok/slim-validation4.svg?style=flat-square
+[ico-version]: http://poser.pugx.org/inok/slim-validation4/v?style=flat-square
+[ico-downloads]: http://poser.pugx.org/inok/slim-validation4/d/monthly?style=flat-square
 [ico-styleci]: https://styleci.io/repos/510467512/shield
 [ico-codecov]: https://codecov.io/gh/nchizhov/Slim-Validation4/branch/master/graph/badge.svg?token=RVQEA5IMUX
+[ico-license]: https://poser.pugx.org/inok/slim-validation4/license?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/inok/slim-validation4
-[link-scrutinizer]: https://scrutinizer-ci.com/g/DavidePastore/Slim-Validation/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/DavidePastore/Slim-Validation
 [link-downloads]: https://packagist.org/packages/inok/slim-validation4
 [link-styleci]: https://styleci.io/repos/510467512/
 [link-codecov]: https://codecov.io/gh/nchizhov/Slim-Validation4
