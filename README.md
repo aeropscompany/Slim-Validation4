@@ -28,14 +28,14 @@ A validation library for the Slim Framework. It internally uses [Respect/Validat
 Via Composer
 
 ``` bash
-$ composer require davidepastore/slim-validation
+$ composer require inok/slim-validation4
 ```
 
-Requires Slim 3.0.0 or newer.
+Requires Slim 4.0.0 or newer.
 
 ## Usage
 
-In most cases you want to register `DavidePastore\Slim\Validation` for a single route, however,
+In most cases you want to register `Inok\Slim\Validation` for a single route, however,
 as it is middleware, you can also register it for all routes.
 
 
@@ -49,10 +49,10 @@ $app = new \Slim\App();
 //Create the validators
 $usernameValidator = v::alnum()->noWhitespace()->length(1, 10);
 $ageValidator = v::numeric()->positive()->between(1, 20);
-$validators = array(
+$validators = [
   'username' => $usernameValidator,
   'age' => $ageValidator
-);
+];
 
 $app->get('/api/myEndPoint',function ($req, $res, $args) {
     //Here you expect 'username' and 'age' parameters
@@ -61,20 +61,20 @@ $app->get('/api/myEndPoint',function ($req, $res, $args) {
       $errors = $req->getAttribute('errors');
 
       /* $errors contains:
-      array(
-        'username' => array(
-          '"davidepastore" must have a length between 1 and 10',
-        ),
-        'age' => array(
-          '"89" must be lower than or equals 20',
-        ),
-      );
+      [
+        'username' => [
+          'length' => '"davidepastore" must have a length between 1 and 10',
+        ],
+        'age' => [
+          'between' => '"89" must be between 1 and 20',
+        ],
+      ];
       */
     } else {
       //No errors
     }
 
-})->add(new \DavidePastore\Slim\Validation\Validation($validators));
+})->add(new \Inok\Slim\Validation\Validation($validators));
 
 $app->run();
 ```
@@ -90,14 +90,14 @@ $app = new \Slim\App();
 //Create the validators
 $usernameValidator = v::alnum()->noWhitespace()->length(1, 10);
 $ageValidator = v::numeric()->positive()->between(1, 20);
-$validators = array(
+$validators = [
   'username' => $usernameValidator,
   'age' => $ageValidator
-);
+];
 
 // Register middleware for all routes
 // If you are implementing per-route checks you must not add this
-$app->add(new \DavidePastore\Slim\Validation\Validation($validators));
+$app->add(new \Inok\Slim\Validation\Validation($validators));
 
 $app->get('/foo', function ($req, $res, $args) {
   //Here you expect 'username' and 'age' parameters
@@ -106,14 +106,14 @@ $app->get('/foo', function ($req, $res, $args) {
     $errors = $req->getAttribute('errors');
 
     /* $errors contains:
-    array(
-      'username' => array(
-        '"davidepastore" must have a length between 1 and 10',
-      ),
-      'age' => array(
-        '"89" must be lower than or equals 20',
-      ),
-    );
+    [
+      'username' => [
+        'length' => '"davidepastore" must have a length between 1 and 10',
+      ],
+      'age' => [
+        'between' => '"89" must be between 1 and 20',
+      ],
+    ];
     */
   } else {
     //No errors
@@ -143,9 +143,9 @@ $app = new \Slim\App();
 
 //Create the validators
 $routeParamValidator = v::numeric()->positive();
-$validators = array(
+$validators = [
   'param' => $routeParamValidator,
-);
+];
 
 $app->get('/foo/{param}', function ($req, $res, $args) {
   //Here you expect 'param' route parameter
@@ -154,16 +154,16 @@ $app->get('/foo/{param}', function ($req, $res, $args) {
     $errors = $req->getAttribute('errors');
 
     /* $errors contains:
-    array(
-        'param' => array(
-          '"wrong" must be numeric',
-        ),
-    );
+    [
+        'param' => [
+          'numeric' => '"wrong" must be numeric',
+        ],
+    ];
     */
   } else {
     //No errors
   }
-})->add(new \DavidePastore\Slim\Validation\Validation($validators));
+})->add(new \Inok\Slim\Validation\Validation($validators));
 
 $app->run();
 ```
@@ -199,12 +199,12 @@ $app = new \Slim\App();
 //Create the validators
 $typeValidator = v::alnum()->noWhitespace()->length(3, 5);
 $emailNameValidator = v::alnum()->noWhitespace()->length(1, 2);
-$validators = array(
+$validators = [
   'type' => $typeValidator,
-  'email' => array(
+  'email' => [
     'name' => $emailNameValidator,
-  ),
-);
+  ],
+];
 ```
 
 If you'll have an error, the result would be:
@@ -219,7 +219,7 @@ Array
 (
     [email.name] => Array
         (
-            [0] => "rq3r" must have a length between 1 and 2
+            'length' => "rq3r" must have a length between 1 and 2
         )
 
 )
@@ -257,12 +257,12 @@ $app = new \Slim\App();
 //Create the validators
 $typeValidator = v::alnum()->noWhitespace()->length(3, 5);
 $emailNameValidator = v::alnum()->noWhitespace()->length(1, 2);
-$validators = array(
+$validators = [
   'type' => $typeValidator,
-  'email' => array(
+  'email' => [
     'name' => $emailNameValidator,
-  ),
-);
+  ],
+];
 ```
 
 
@@ -278,7 +278,7 @@ Array
 (
     [email.name] => Array
         (
-            [0] => "rq3r" must have a length between 1 and 2
+            'length' => "rq3r" must have a length between 1 and 2
         )
 
 )
@@ -298,10 +298,10 @@ $app = new \Slim\App();
 //Create the validators
 $usernameValidator = v::alnum()->noWhitespace()->length(1, 10);
 $ageValidator = v::numeric()->positive()->between(1, 20);
-$validators = array(
+$validators = [
   'username' => $usernameValidator,
   'age' => $ageValidator
-);
+];
 
 $translator = function($message){
   $messages = [
@@ -312,7 +312,7 @@ $translator = function($message){
   return $messages[$message];
 };
 
-$middleware = new \DavidePastore\Slim\Validation\Validation($validators, $translator);
+$middleware = new \Inok\Slim\Validation\Validation($validators, $translator);
 
 // Register middleware for all routes or only for one...
 
@@ -335,20 +335,21 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 ## Credits
 
 - [Davide Pastore](https://github.com/davidepastore)
+- [Nikolay Chizhov](https://github.com/nchizhov)
 
 
 [respect-validation]: https://github.com/Respect/Validation
-[custom-messages]: https://respect-validation.readthedocs.io/en/1.1/feature-guide/#custom-messages
-[ico-version]: https://img.shields.io/packagist/v/DavidePastore/Slim-Validation.svg?style=flat-square
+[custom-messages]: https://respect-validation.readthedocs.io/en/2.1/feature-guide/#custom-messages
+[ico-version]: https://img.shields.io/packagist/v/Inok/Slim-Validation4.svg?style=flat-square
 [ico-travis]: https://travis-ci.org/DavidePastore/Slim-Validation.svg?branch=master
 [ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/DavidePastore/Slim-Validation.svg?style=flat-square
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/davidepastore/Slim-Validation.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/davidepastore/slim-validation.svg?style=flat-square
-[ico-styleci]: https://styleci.io/repos/48914054/shield
+[ico-downloads]: https://img.shields.io/packagist/dt/inok/slim-validation4.svg?style=flat-square
+[ico-styleci]: https://styleci.io/repos/510467512/shield
 
-[link-packagist]: https://packagist.org/packages/davidepastore/slim-validation
+[link-packagist]: https://packagist.org/packages/inok/slim-validation4
 [link-travis]: https://travis-ci.org/DavidePastore/Slim-Validation
 [link-scrutinizer]: https://scrutinizer-ci.com/g/DavidePastore/Slim-Validation/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/DavidePastore/Slim-Validation
-[link-downloads]: https://packagist.org/packages/davidepastore/slim-validation
-[link-styleci]: https://styleci.io/repos/48914054/
+[link-downloads]: https://packagist.org/packages/inok/slim-validation4
+[link-styleci]: https://styleci.io/repos/510467512/
