@@ -42,7 +42,7 @@ class SlimTestCase extends TestCase
    *
    * @return App
    */
-  final private function getAppInstance(): App {
+  private function getAppInstance(): App {
     $containerBuilder = new ContainerBuilder();
     $container = $containerBuilder->build();
 
