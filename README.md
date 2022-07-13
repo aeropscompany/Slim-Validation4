@@ -47,7 +47,7 @@ $app = new \Slim\App();
 
 //Create the validators
 $usernameValidator = v::alnum()->noWhitespace()->length(1, 10);
-$ageValidator = v::numeric()->positive()->between(1, 20);
+$ageValidator = v::numericVal()->positive()->between(1, 20);
 $validators = [
   'username' => $usernameValidator,
   'age' => $ageValidator
@@ -88,7 +88,7 @@ $app = new \Slim\App();
 
 //Create the validators
 $usernameValidator = v::alnum()->noWhitespace()->length(1, 10);
-$ageValidator = v::numeric()->positive()->between(1, 20);
+$ageValidator = v::numericVal()->positive()->between(1, 20);
 $validators = [
   'username' => $usernameValidator,
   'age' => $ageValidator
@@ -141,7 +141,7 @@ use Respect\Validation\Validator as v;
 $app = new \Slim\App();
 
 //Create the validators
-$routeParamValidator = v::numeric()->positive();
+$routeParamValidator = v::numericVal()->positive();
 $validators = [
   'param' => $routeParamValidator,
 ];
@@ -296,7 +296,7 @@ $app = new \Slim\App();
 
 //Create the validators
 $usernameValidator = v::alnum()->noWhitespace()->length(1, 10);
-$ageValidator = v::numeric()->positive()->between(1, 20);
+$ageValidator = v::numericVal()->positive()->between(1, 20);
 $validators = [
   'username' => $usernameValidator,
   'age' => $ageValidator
