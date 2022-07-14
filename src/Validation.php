@@ -97,8 +97,9 @@ class Validation
    * @return void
    */
   private function setTranslatorFactory(): void {
-    $factoryInstance = (is_null($this->translator)) ?
-      new Factory() : (new Factory())->withTranslator($this->translator);
+    $factoryInstance = Factory::getDefaultInstance()->withTranslator(
+      is_null($this->translator) ? 'strval' : $this->translator
+    );
     Factory::setDefaultInstance(
       $factoryInstance
     );
