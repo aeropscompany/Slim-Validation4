@@ -11,6 +11,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
+use Slim\Psr7\Stream;
+use Slim\Psr7\UploadedFile;
 
 class SlimTestCase extends TestCase
 {
@@ -68,6 +70,30 @@ class SlimTestCase extends TestCase
     return $request->withHeader('Content-Type', 'application/json;charset=utf8');
   }
 
+  final protected function createFileRequest(string $method, $uri, array $data = null): ServerRequestInterface {
+    $request = $this->createRequest($method, $uri);
+    $fileData = [];
+    $otherData = [];
+    if ($data !== null) {
+      foreach ($data as $k => $v) {
+        if (!$this->isBase64($v)) {
+          $otherData[$k] = $v;
+          continue;
+        }
+        $stream = new Stream($this->createFileResource($v));
+        $uploadFile = new UploadedFile($stream, 'file.png', 'image/png', $stream->getSize());
+        $fileData[$k] = $uploadFile;
+      }
+      if (!empty($otherData)) {
+        $request = $request->withParsedBody($otherData);
+      }
+      if (!empty($fileData)) {
+        $request = $request->withUploadedFiles($fileData);
+      }
+    }
+    return $request->withHeader('Content-Type', 'multipart/form-data');
+  }
+
   final protected function createXMLRequest(string $method, $uri, string $data = null): ServerRequestInterface {
     $request = $this->createRequest($method, $uri);
     if ($data !== null) {
@@ -97,5 +123,24 @@ class SlimTestCase extends TestCase
     self::$expectedTranslator = $expectedTranslator;
     self::$expectedHasErrors = $expectedHasErrors;
     self::$expectedErrors = $expectedErrors;
+  }
+
+  final private function isBase64(string $file): bool {
+    $decoded = base64_decode($file, true);
+    if ($decoded !== false){
+      if (base64_encode($decoded) === $file) {
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
+
+  final private function createFileResource(string $file) {
+    $encodedFile = base64_decode($file);
+    $stream = fopen('php://temp', 'r+');
+    fwrite($stream, $encodedFile);
+    rewind($stream);
+    return $stream;
   }
 }

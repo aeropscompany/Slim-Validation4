@@ -253,6 +253,7 @@ class Validation
    */
   private function retrieveParams(ServerRequestInterface $request): array {
     return array_merge(
+      $request->getUploadedFiles(),
       $request->getQueryParams(),
       $this->retrieveBodyParams($request),
       $this->retrieveRouteParams($request)
