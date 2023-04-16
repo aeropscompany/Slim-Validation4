@@ -59,7 +59,7 @@ class ValidationTest extends SlimTestCase
   /**
    * The validation provider.
    */
-  public function validationProvider(): array {
+  public static function validationProvider(): array {
     return [
       'Validation without errors' => [
         [
@@ -573,7 +573,7 @@ class ValidationTest extends SlimTestCase
   /**
    * The validation provider for the route parameters.
    */
-  public function routeParamValidationProvider(): array {
+  public static function routeParamValidationProvider(): array {
     return [
       'Validation without errors' => [
         [
@@ -618,7 +618,7 @@ class ValidationTest extends SlimTestCase
   /**
    * The validation provider for the file parameters.
    */
-  public function fileUploadParamValidationProvider(): array {
+  public static function fileUploadParamValidationProvider(): array {
     Factory::setDefaultInstance(
       (new Factory())
         ->withRuleNamespace('Inok\\Slim\\Validation\\Tests\\Validators\\Rules')
