@@ -79,7 +79,7 @@ class Validation
    * @param callable|null $translator
    * @param array $options
    */
-  public function __construct($validators = null, callable $translator = null, array $options = []) {
+  public function __construct($validators = null, ?callable $translator = null, array $options = []) {
     // Set the validators
     if (is_array($validators) || $validators instanceof ArrayAccess) {
       $this->validators = $validators;
